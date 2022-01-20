@@ -102,15 +102,18 @@ if __name__ == "__main__":
 			consensus[pos] = 'N'
 
 	# apply ALT if there is no Ns
+	current_offset = 0
 	for index, row in snp_table.iterrows():
-		pos = row['POS']
+		pos = row['POS'] + current_offset
 		replace_length = len(row['REF'])
 		if 'N' not in consensus[pos:pos+replace_length]:
 			consensus = consensus[:pos]+list(row['ALT'])+consensus[pos+replace_length:]
+			current_offset += len(row['ALT']) - len(row['REF'])
 
 	# get fasta header from id in zip filename
 	path, file = os.path.split(args.genexus_archive)
 	fasta_header = file.split('_')[0]
 	
+	# write output
 	with open(args.output, 'w') as f_output:
 		f_output.write(f">{fasta_header}\n{''.join(consensus)}\n")
