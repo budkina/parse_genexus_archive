@@ -104,7 +104,7 @@ if __name__ == "__main__":
 	# apply ALT if there is no Ns
 	for index, row in snp_table.iterrows():
 		pos = row['POS']
-		replace_length = len(row['ALT'])
+		replace_length = len(row['REF'])
 		if 'N' not in consensus[pos:pos+replace_length]:
 			consensus = consensus[:pos]+list(row['ALT'])+consensus[pos+replace_length:]
 
