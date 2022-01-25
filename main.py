@@ -2,14 +2,14 @@ import sys
 import os
 from subprocess import call
 import argparse
-from zipfile import ZipFile
+import zipfile
 import pandas as pd
 from Bio import SeqIO
 import pysam
 
 def parse_zip(zip_name):
 	"""Get fastq and xls filenames and extract them"""
-	with ZipFile(args.genexus_archive) as zf:
+	with zipfile.ZipFile(args.genexus_archive) as zf:
 		zipped_files = zf.namelist()
 		if 'COVID19AnnotateSnpEff.zip' not in zipped_files:
 			sys.exit("COVID19AnnotateSnpEff.zip is absent")
@@ -28,7 +28,7 @@ def parse_zip(zip_name):
 		with open('COVID19AnnotateSnpEff.zip', 'wb') as f_zip:
 			f_zip.write(zf.read('COVID19AnnotateSnpEff.zip'))
 
-	with ZipFile('COVID19AnnotateSnpEff.zip') as zf_SnpEff:
+	with zipfile.ZipFile('COVID19AnnotateSnpEff.zip') as zf_SnpEff:
 		zipped_files = zf_SnpEff.namelist()
 		xls_filename = ""
 		for filename in zipped_files:
@@ -75,6 +75,9 @@ if __name__ == "__main__":
 		sys.exit("Provide genexus archive filename")
 
 	# parse archive
+	if not zipfile.is_zipfile(args.genexus_archive):
+		sys.exit(f"{args.genexus_archive} is not a zip file")
+
 	fastq_name, xls_filename = parse_zip(args.genexus_archive)
 
 	# exclude frameshift_variant rows from snp_table
